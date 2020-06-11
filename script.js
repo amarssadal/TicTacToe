@@ -3,7 +3,7 @@ let evaluation = (function () {
     let playerVal, curPlayer, curGameStat;
     
     let winStateMatch = [
-        [1,2,3], [4,5,6], [7,8,9], [1,4,7], [1,5,9], [2,5,8], [3,6,9], [1,2,8], [3,5,7]
+        [1,2,3], [4,5,6], [7,8,9], [1,4,7], [1,5,9], [2,5,8], [3,6,9], [3,5,7]
     ]
 
     ////////////////////////////////////|Reset All
@@ -31,8 +31,10 @@ let evaluation = (function () {
 
     ////////////////////////////////////|Move Made
     function updInt (cur) {
-        if (!curGameState[cur]) {
-            curGameState[cur] = playerVal[curPlayer ?0 :1 ];
+        if (curGameState[cur] === '') {
+            curGameState[cur] = playerVal[0];
+            //console.log(['hp', cur, curGameState[cur]]);
+            curPlayer = false;
             return [cur, curGameState[cur]];
         } else {
             return false;
@@ -41,20 +43,26 @@ let evaluation = (function () {
 
     ////////////////////////////////////|Computer makes a move
     function compMove () {
-        for (n in curGameState) {
-            if(curGameState[n] === '') {
-                curGameState[n] = playerVal[1];
-                return [parseInt(n), curGameState[n]];
-            }
+        let empties = [];
+        //------------------------------|find empty slots in the game
+        console.log('before', curGameState);
+        for (emp in curGameState) {
+             if (curGameState[emp] === '') empties.push(parseInt(emp));
         }
+        console.log(empties);
+        // //------------------------------|
+        let randomer = Math.floor((Math.random() * empties.length));
+        console.log(randomer, empties.length);
+        curGameState[empties[randomer]] = 'O';
+        return [empties[randomer], 'O']
     }
 
     ////////////////////////////////////|Checks if a win has been had - needs to be called from another function to check both X and O
-    function checkWin(m) {
+    function checkWin(m, currGame) {
         for (winArray of winStateMatch) {
             let win = [];
             for (winPos of winArray){
-                if (curGameState[winPos] === m) {
+                if (currGame[winPos] === m) {
                     win.push(winPos);
                 }
             }
@@ -64,8 +72,8 @@ let evaluation = (function () {
 
     ////////////////////////////////////|Check if X or O has won by calling the above function
     function checkXO () {
-        if(checkWin(playerVal[0])) return checkWin(playerVal[0]);
-        if(checkWin(playerVal[1])) return checkWin(playerVal[1]);
+        if(checkWin(playerVal[0], curGameState)) return checkWin(playerVal[0], curGameState);
+        if(checkWin(playerVal[1], curGameState)) return checkWin(playerVal[1], curGameState);
         return false;
     }
 
@@ -78,7 +86,10 @@ let evaluation = (function () {
         },
         //------------------------------|Check if anyone won
         checkWin: checkXO,
-        compMove: compMove
+        compMove: compMove,
+        testing: function () {
+            console.log(curGameState);
+        }
 
     }
 })();
@@ -97,6 +108,7 @@ let updateUI = (function () {
 
     ////////////////////////////////////|Update the board
     function updateT(dta) {
+        console.log('UI', dta);
         cells[dta[0] - 1].innerHTML = dta[1];
     }
 
@@ -142,13 +154,17 @@ let mainController = (function (evl, uiu) {
         let dta = evl.updateInternal(cur);
         //------------------------------|update the UI
         if (dta) uiu.updateTurn(dta);
-        //------------------------------|check if a win has been had
-        let cta = evl.compMove();
+        //------------------------------|check if a win is had
+        if (dta) win = evl.checkWin();
+        if(win) uiu.decWin(win);
+        if(win) removeListeners();
+        //------------------------------|if no win computer makes move
+        let cta;
+        if (!win) cta = evl.compMove();
         //------------------------------|update the UI with computer move
         if (cta) uiu.updateTurn(cta);
-        //------------------------------|check if a win is had
-        let win = evl.checkWin();
-        //------------------------------|If win - update UI with winner and disable event listeners
+        //------------------------------|check if computer won
+        if (cta) win = evl.checkWin();
         if(win) uiu.decWin(win);
         if(win) removeListeners();
     }
