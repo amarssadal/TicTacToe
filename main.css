@@ -1,0 +1,53 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+.main {
+  width: 280px;
+  height: 280px;
+}
+
+.gameBox {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (90px)[3];
+      grid-template-columns: repeat(3, 90px);
+  -ms-grid-rows: (90px)[3];
+      grid-template-rows: repeat(3, 90px);
+  row-gap: 5px;
+  -webkit-column-gap: 5px;
+          column-gap: 5px;
+  background-color: black;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 60px;
+}
+
+.gameBox .cells {
+  width: 90px;
+  height: 90px;
+  background-color: white;
+  display: -ms-grid;
+  display: grid;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+}
+/*# sourceMappingURL=main.css.map */

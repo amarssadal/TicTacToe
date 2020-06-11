@@ -1,0 +1,42 @@
+// ALL VARIABLES
+$theOutlineColour: black;
+$cellBGColor: white;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.main {
+    width: 280px;
+    height: 280px;
+}    
+
+.gameBox {
+    display: grid;
+    grid-template-columns: repeat(3,90px);
+    grid-template-rows: repeat(3, 90px);
+    row-gap: 5px;
+    column-gap: 5px;
+    background-color: $theOutlineColour;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 60px;
+    .cells {
+        width: 90px;
+        height: 90px;
+        background-color: $cellBGColor;
+        display: grid;
+        align-content: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+}
