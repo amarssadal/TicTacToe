@@ -1,8 +1,9 @@
+////////////////////////////////////|GAME EVALUATION MODULE|////////////////////////////////////
 let evaluation = (function () {
     let playerVal, curPlayer, curGameStat;
     
     let winStateMatch = [
-        [1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,2,8], [3,5,7]
+        [1,2,3], [4,5,6], [7,8,9], [1,4,7], [1,5,9], [2,5,8], [3,6,9], [1,2,8], [3,5,7]
     ]
 
     ////////////////////////////////////|Reset All
@@ -32,8 +33,19 @@ let evaluation = (function () {
     function updInt (cur) {
         if (!curGameState[cur]) {
             curGameState[cur] = playerVal[curPlayer ?0 :1 ];
-            curPlayer = !curPlayer;
             return [cur, curGameState[cur]];
+        } else {
+            return false;
+        }
+    }
+
+    ////////////////////////////////////|Computer makes a move
+    function compMove () {
+        for (n in curGameState) {
+            if(curGameState[n] === '') {
+                curGameState[n] = playerVal[1];
+                return [parseInt(n), curGameState[n]];
+            }
         }
     }
 
@@ -45,13 +57,12 @@ let evaluation = (function () {
                 if (curGameState[winPos] === m) {
                     win.push(winPos);
                 }
-                //console.log(curGameState[winPos], winPos, m);
             }
             if (win.length === 3) return [m, win];
         }
     }
 
-    ////////////////////////////////////|Check if X or ) has won by calling the above function
+    ////////////////////////////////////|Check if X or O has won by calling the above function
     function checkXO () {
         if(checkWin(playerVal[0])) return checkWin(playerVal[0]);
         if(checkWin(playerVal[1])) return checkWin(playerVal[1]);
@@ -59,17 +70,21 @@ let evaluation = (function () {
     }
 
     return {
+        //------------------------------|initialise the game
         initGame: resetAll,
+        //------------------------------|update internal after move made
         updateInternal: function (cur) {
             return updInt(cur);
         },
-        checkWin: checkXO
+        //------------------------------|Check if anyone won
+        checkWin: checkXO,
+        compMove: compMove
 
     }
 })();
 
 
-
+////////////////////////////////////|UI UPDATE MODULE|////////////////////////////////////
 let updateUI = (function () {
     let cells = document.querySelectorAll('.cells');
 
@@ -83,17 +98,12 @@ let updateUI = (function () {
     ////////////////////////////////////|Update the board
     function updateT(dta) {
         cells[dta[0] - 1].innerHTML = dta[1];
-        cells[dta[0] - 1].removeEventListener('click', (x) => {
-            let cur = x.target.classList[1];
-            turnTaken(cur);
-        });
     }
 
     ////////////////////////////////////|Declare winner
     function decWin(win) {
         for (cell of win[1]) {
-            console.log(cells[cell-1]);
-            cells[cell-1].style.backgroundColor = 'red';
+            cells[cell-1].style.backgroundColor = 'green';
         }
 
     }
@@ -109,19 +119,20 @@ let updateUI = (function () {
 })();
 
 
-
+////////////////////////////////////|MAIN CONTROLLER MODULE|////////////////////////////////////
 let mainController = (function (evl, uiu) {
     ////////////////////////////////////|Save DOM Strings
     let DStrings = uiu.DOMStrings;
     
-    ////////////////////////////////////|Setup event listeners
-    function eventListeners () {
-        for (x of DStrings.cells) {
-            x.addEventListener('click', (x) => {
-                let cur = x.target.classList[1];
-                turnTaken(cur);
-            });
-        }
+    ////////////////////////////////////|Setup enabling and disabling event listeners
+    function addThis (x) {
+        turnTaken(x.target.classList[1]);
+    }
+    function eventListeners (val) {
+        DStrings.cells.forEach(el => el.addEventListener('click', addThis));
+    }
+    function removeListeners () {
+        DStrings.cells.forEach(el => el.removeEventListener('click', addThis));
     }
 
     ////////////////////////////////////|Action on click
@@ -130,12 +141,16 @@ let mainController = (function (evl, uiu) {
         //------------------------------|update internal data structure with move made
         let dta = evl.updateInternal(cur);
         //------------------------------|update the UI
-        uiu.updateTurn(dta);
+        if (dta) uiu.updateTurn(dta);
         //------------------------------|check if a win has been had
+        let cta = evl.compMove();
+        //------------------------------|update the UI with computer move
+        if (cta) uiu.updateTurn(cta);
+        //------------------------------|check if a win is had
         let win = evl.checkWin();
         //------------------------------|If win - update UI with winner and disable event listeners
         if(win) uiu.decWin(win);
-        if(win) disableListeners;
+        if(win) removeListeners();
     }
 
     ////////////////////////////////////|Initialise the game
@@ -145,7 +160,7 @@ let mainController = (function (evl, uiu) {
         //------------------------------|clear all the cells - UI
         uiu.initUI();
         //------------------------------|call event listeners
-        eventListeners();
+        eventListeners('first');
     }
 
     return  {
