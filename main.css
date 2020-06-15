@@ -15,11 +15,30 @@
           justify-content: center;
   -ms-flex-line-pack: center;
       align-content: center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .main {
   width: 280px;
-  height: 280px;
+  height: 360px;
+}
+
+.buttonBox {
+  height: 60px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.buttonBox .reBut {
+  font-size: 12px;
+  border: 1px solid #c7c7c7;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
 }
 
 .gameBox {
@@ -33,7 +52,6 @@
   -webkit-column-gap: 5px;
           column-gap: 5px;
   background-color: black;
-  font-family: 'Montserrat', sans-serif;
   font-size: 60px;
 }
 

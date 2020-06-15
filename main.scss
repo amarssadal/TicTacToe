@@ -14,12 +14,28 @@ $cellBGColor: white;
     display: grid;
     justify-content: center;
     align-content: center;
+    user-select: none;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .main {
     width: 280px;
-    height: 280px;
+    height: 360px;
 }    
+
+.buttonBox {
+    height: 60px;
+    text-align: center;
+    margin-bottom: 20px;
+
+    .reBut {
+        font-size: 12px;
+        border: 1px solid #c7c7c7;
+        padding: 10px;
+        background-color: white;
+        border-radius: 5px;
+    }
+}
 
 .gameBox {
     display: grid;
@@ -28,7 +44,6 @@ $cellBGColor: white;
     row-gap: 5px;
     column-gap: 5px;
     background-color: $theOutlineColour;
-    font-family: 'Montserrat', sans-serif;
     font-size: 60px;
     .cells {
         width: 90px;
